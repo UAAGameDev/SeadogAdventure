@@ -1,34 +1,49 @@
-import random
-
 import pygame
+from pygame.locals import *
 import os
 import math
+import random
 
-from SpriteSheet import SpriteSheet, scale_image
+from SpriteSheet import SpriteSheet, scale_image, draw_text
 from World import World, Tile
 
 # game window
-SCREEN_WIDTH = 1924
-SCREEN_HEIGHT = 1000
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-1920,32)
-
 pygame.init()
+SCREEN_WIDTH = int(pygame.display.Info().current_w / 1.5)
+SCREEN_HEIGHT = int(pygame.display.Info().current_h / 1.5)
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), RESIZABLE)
+fullscreen = False
+# These store the width and height for switching between full screen and windowed.
+setScreenWidth = SCREEN_WIDTH
+setScreenHeight = SCREEN_HEIGHT
+'''
+DO NOT REMOVE 
+Setting the mode twice ensures the VIDEORESIZE event is called when resizing the screen for the first time.
+Without this the window will not resize properly when the user changes its size for the first time.
+'''
+pygame.display.set_mode((0,0), FULLSCREEN | RESIZABLE)
+pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), RESIZABLE)
 
+if(False): # Set this to true if you want it to appear on a second monitor
+    os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-SCREEN_WIDTH,32)
 
+# Title
+pygame.display.set_caption('UAA Game')
+# Icon
 toddler = pygame.image.load("screaming_toddler.jpg")
 pygame.display.set_icon(toddler)
+# Game Clock
+clock = pygame.time.Clock()
+# Font
+gameFont = pygame.font.SysFont('consolas',30)
 
 
+
+
+# Sprites
 Scale = 2.5
 BlockXSize = 32
 BlockYSize = 64
-
-
-# Screen
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-# Title
-pygame.display.set_caption('UAA Game')
-
 
 TileSheet = SpriteSheet("2by1.png")
 Selector = TileSheet.get_image(0, 0, BlockXSize, BlockYSize).convert_alpha()
@@ -82,36 +97,25 @@ def draw(XScreenOffset, YScreenOffset):
         xYOffset = BlockYOffset * y + XScreenOffset
         yYOffset = BlockYOffset / 2 * y + YScreenOffset
         for x in range(world.ChunkXSize):
-            screen.blit(ID_LIST[world.getTile(x, y).land], (x * BlockXOffset - xYOffset, x * BlockXOffset / 2 + yYOffset))
-            screen.blit(ID_LIST[world.getTile(x, y).prop],        (x * BlockXOffset - xYOffset, x * BlockXOffset / 2 + yYOffset))
+            screen.blit(ID_LIST[world.getTile(x, y).land],      (x * BlockXOffset - xYOffset, x * BlockXOffset / 2 + yYOffset))
+            screen.blit(ID_LIST[world.getTile(x, y).solidProp], (x * BlockXOffset - xYOffset, x * BlockXOffset / 2 + yYOffset))
+            screen.blit(ID_LIST[world.getTile(x, y).prop],      (x * BlockXOffset - xYOffset, x * BlockXOffset / 2 + yYOffset))
 
 
 
-
-
-
-
-
-# Font
-gameFont = pygame.font.SysFont('consolas',30)
-# Draws Text on screen at x, y
-def draw_text(text, _x, _y, color=(255, 255, 255), font=gameFont):
-    img = font.render(text, True, color)
-    screen.blit(img, (_x, _y))
 
 run = True
-clock = pygame.time.Clock()
 
 # Keyboard
 movingLeft = False
 movingRight = False
 movingUp = False
 movingDown = False
-
+# Camera
 XScreenOffset = 0
 YScreenOffset = 0
 cameraSpeed = 128.0
-
+# FPS Counter
 indexFPS = 0
 maxFPSIndex = 20
 averageFPS = [0] * maxFPSIndex
@@ -122,11 +126,21 @@ while run:
 
     # Mouse Position
     pos = pygame.mouse.get_pos()
-    #print(XScreenOffset, YScreenOffset)
     # Keypresses
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        # System Events
+        if event.type == pygame.QUIT: # Shut down pygame
             run = False
+        if event.type == VIDEORESIZE: # if window is resized change the window
+            # Center camera in window so the view appears to have not changed
+            XScreenOffset += (SCREEN_WIDTH - event.w) / 2
+            YScreenOffset -= (SCREEN_HEIGHT - event.h) / 2
+            SCREEN_WIDTH = event.w
+            SCREEN_HEIGHT = event.h
+            if(not FULLSCREEN):
+                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), RESIZABLE)
+
+        # Key Events
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                 movingRight = True
@@ -136,6 +150,18 @@ while run:
                 movingUp = True
             if event.key == pygame.K_s or event.key == pygame.K_DOWN:
                 movingDown = True
+
+            if event.key == pygame.K_ESCAPE: # Quit Game
+                run = False
+            if event.key == pygame.K_F11: # Toggles Fullscreen
+                fullscreen = not fullscreen
+                if(fullscreen):
+                    # Save windowed window size
+                    setScreenWidth = SCREEN_WIDTH
+                    setScreenHeight = SCREEN_HEIGHT
+                    screen = pygame.display.set_mode((0,0), FULLSCREEN | RESIZABLE)
+                else:
+                    screen = pygame.display.set_mode((setScreenWidth,setScreenHeight), RESIZABLE)
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
@@ -162,10 +188,10 @@ while run:
     # Draw Tiles
     draw(XScreenOffset, YScreenOffset)
 
-    # Average FPS
+    # Calculate and Draw FPS Counter
     averageFPS.pop(0)
     averageFPS.append(FPS)
-    draw_text(str(int(sum(averageFPS) / maxFPSIndex)), 0,0)
+    draw_text(screen, gameFont, str(int(sum(averageFPS) / maxFPSIndex)), 0, 0)
     # Puts everything on the display
     pygame.display.update()
 

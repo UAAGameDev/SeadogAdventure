@@ -51,3 +51,8 @@ def flip_img(img, xflip=False, yflip=False):
 def scale_image(scale, img):
         img = pygame.transform.scale(img, (int(img.get_width()*scale), int(img.get_height()*scale)))
         return img
+
+# Draws Text on screen at x, y
+def draw_text(screen, font, text, _x, _y, color=(255, 255, 255)):
+    img = font.render(text, True, color)
+    screen.blit(img, (_x, _y))
