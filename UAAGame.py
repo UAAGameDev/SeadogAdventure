@@ -10,7 +10,6 @@ from World import World, Tile
 # game window
 SCREEN_WIDTH = 1924
 SCREEN_HEIGHT = 1000
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-1920,32)
 
 pygame.init()
 
