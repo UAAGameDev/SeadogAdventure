@@ -2,6 +2,7 @@ import random
 
 import pygame
 import os
+import math
 
 from SpriteSheet import SpriteSheet, scale_image
 from World import World, Tile
@@ -12,6 +13,11 @@ SCREEN_HEIGHT = 1000
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (-1920,32)
 
 pygame.init()
+
+
+toddler = pygame.image.load("screaming_toddler.jpg")
+pygame.display.set_icon(toddler)
+
 
 Scale = 2.5
 BlockXSize = 32
@@ -76,8 +82,7 @@ def draw(XScreenOffset, YScreenOffset):
         xYOffset = BlockYOffset * y + XScreenOffset
         yYOffset = BlockYOffset / 2 * y + YScreenOffset
         for x in range(world.ChunkXSize):
-
-            screen.blit(ID_LIST[world.getTile(x, y).traversable], (x * BlockXOffset - xYOffset, x * BlockXOffset / 2 + yYOffset))
+            screen.blit(ID_LIST[world.getTile(x, y).land], (x * BlockXOffset - xYOffset, x * BlockXOffset / 2 + yYOffset))
             screen.blit(ID_LIST[world.getTile(x, y).prop],        (x * BlockXOffset - xYOffset, x * BlockXOffset / 2 + yYOffset))
 
 
@@ -87,7 +92,12 @@ def draw(XScreenOffset, YScreenOffset):
 
 
 
-
+# Font
+gameFont = pygame.font.SysFont('consolas',30)
+# Draws Text on screen at x, y
+def draw_text(text, _x, _y, color=(255, 255, 255), font=gameFont):
+    img = font.render(text, True, color)
+    screen.blit(img, (_x, _y))
 
 run = True
 clock = pygame.time.Clock()
@@ -100,11 +110,15 @@ movingDown = False
 
 XScreenOffset = 0
 YScreenOffset = 0
-cameraSpeed = 8
+cameraSpeed = 128.0
+
+indexFPS = 0
+maxFPSIndex = 20
+averageFPS = [0] * maxFPSIndex
 while run:
     # Clock Speed
     clock.tick()
-    print(clock.get_fps())
+    FPS = clock.get_fps()
 
     # Mouse Position
     pos = pygame.mouse.get_pos()
@@ -135,18 +149,23 @@ while run:
 
     # Screen Movement
     if(movingLeft):
-        XScreenOffset -= cameraSpeed
+        XScreenOffset -= cameraSpeed / FPS
     if(movingRight):
-        XScreenOffset += cameraSpeed
+        XScreenOffset += cameraSpeed / FPS
     if(movingUp):
-        YScreenOffset += cameraSpeed
+        YScreenOffset += cameraSpeed / FPS
     if(movingDown):
-        YScreenOffset -= cameraSpeed
+        YScreenOffset -= cameraSpeed / FPS
 
     # Background
     screen.fill((17, 16, 27))
     # Draw Tiles
     draw(XScreenOffset, YScreenOffset)
+
+    # Average FPS
+    averageFPS.pop(0)
+    averageFPS.append(FPS)
+    draw_text(str(int(sum(averageFPS) / maxFPSIndex)), 0,0)
     # Puts everything on the display
     pygame.display.update()
 

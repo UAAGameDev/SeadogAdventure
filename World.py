@@ -1,8 +1,8 @@
 import math
 
 class Tile:
-    def __init__(self, traversable = 5, prop = 0, solidProp = 0, isWalkable = False):
-        self.traversable = traversable
+    def __init__(self, land = 5, prop = 0, solidProp = 0, isWalkable = False):
+        self.land = land
         self.prop = prop
         self.solidProp = solidProp
         self.isWalkable = isWalkable
@@ -14,11 +14,11 @@ class Chunk:
             self.data.append([])
             for y in range(ySize):
                 if (x % 5 == 0):
-                    self.data[x].append(Tile(traversable=5))
+                    self.data[x].append(Tile(land=5))
                 elif (x % 5 == 1):
-                    self.data[x].append(Tile(traversable=9, prop=16))
+                    self.data[x].append(Tile(land=9, prop=14))
                 else:
-                    self.data[x].append(Tile(traversable=9))
+                    self.data[x].append(Tile(land=9))
 
 
 class World:
