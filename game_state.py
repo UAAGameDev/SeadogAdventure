@@ -8,14 +8,25 @@ class Universe:
 
     """
     def __init__(self):
+        # game objects
+
+        self.sprites = []
+        self.players = []
+        self.objects = []
+
+        # states\
+        self.game_state = None
+        self.camera_state = None
+        self.player_state = None
+        self.keyboard_state = None
+
+
+class GameState:
+    def __init__(self):
         pass
 
 
-
-
 class CameraState:
-
-
 
     def __init__(self):
         self.moving_up = False
