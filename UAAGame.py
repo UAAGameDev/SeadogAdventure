@@ -1,13 +1,12 @@
 import pygame
 from pygame.locals import VIDEORESIZE, FULLSCREEN, RESIZABLE
-from screen_setup import initialize_screen
+from ScreenHandler import ScreenHandler
 
 from SpriteSheet import SpriteSheet, scale_image, draw_text
 from game_state import KeyBoardState, CameraState
 from World import World, Tile
 
-screen, SCREEN_WIDTH, SCREEN_HEIGHT = initialize_screen(two_monitors=False)
-
+screen_handler = ScreenHandler()
 
 # Game Clock
 clock = pygame.time.Clock()
@@ -69,20 +68,24 @@ BlockYOffset = BlockXSize * Scale / 2
 
 
 def draw(XScreenOffset, YScreenOffset):
-    global screen, BlockXSize, BlockYSize, Walls, Floors, Props, BlockXOffset, BlockYOffset
+    """
+
+    I think we could get away from global variables by building a universe class? then feeding that to a screen
+    handler that does this sort of processing?
+    """
+    global screen_handler, BlockXSize, BlockYSize, Walls, Floors, Props, BlockXOffset, BlockYOffset
     for y in range(world.ChunkYSize):
         xYOffset = BlockYOffset * y + XScreenOffset
         yYOffset = BlockYOffset / 2 * y + YScreenOffset
         for x in range(world.ChunkXSize):
-            screen.blit(ID_LIST[world.getTile(x, y).land],
+            screen_handler.screen.blit(ID_LIST[world.getTile(x, y).land],
                         (x * BlockXOffset - xYOffset, x * BlockXOffset / 2 + yYOffset))
-            screen.blit(ID_LIST[world.getTile(x, y).solidProp],
+            screen_handler.screen.blit(ID_LIST[world.getTile(x, y).solidProp],
                         (x * BlockXOffset - xYOffset, x * BlockXOffset / 2 + yYOffset))
-            screen.blit(ID_LIST[world.getTile(x, y).prop],
+            screen_handler.screen.blit(ID_LIST[world.getTile(x, y).prop],
                         (x * BlockXOffset - xYOffset, x * BlockXOffset / 2 + yYOffset))
 
 
-run = True
 
 # Keyboard
 keyboard_state = KeyBoardState()
@@ -93,7 +96,7 @@ camera_state = CameraState()
 indexFPS = 0
 maxFPSIndex = 20
 averageFPS = [0] * maxFPSIndex
-while run:
+while screen_handler.running:
     # Clock Speed
     clock.tick()
     FPS = clock.get_fps()
@@ -104,32 +107,23 @@ while run:
     for event in pygame.event.get():
         # System Events
         if event.type == pygame.QUIT:  # Shut down pygame
-            run = False
+            screen_handler.shutdown()
+
         if event.type == VIDEORESIZE:  # if window is resized change the window
             # Center camera in window so the view appears to have not changed
-            camera_state.XScreenOffset += (SCREEN_WIDTH - event.w) / 2
-            camera_state.YScreenOffset -= (SCREEN_HEIGHT - event.h) / 2
-            SCREEN_WIDTH = event.w
-            SCREEN_HEIGHT = event.h
+            camera_state.XScreenOffset += (screen_handler.screen_width - event.w) / 2
+            camera_state.YScreenOffset -= (screen_handler.screen_height - event.h) / 2
+            screen_handler.screen_width = event.w
+            screen_handler.screen_height = event.h
             if not FULLSCREEN:
-                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), RESIZABLE)
+                screen_handler.screen = pygame.display.set_mode(
+                    (screen_handler.screen_width, screen_handler.screen_height), RESIZABLE)
 
-        # Key Events
+        # Keyboard Events
         if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-            keyboard_state.process_keyboard_events(event.key, camera_state, None)
+            keyboard_state.process_keyboard_events(event.key, camera_state, screen_handler, None)
 
-            if event.key == pygame.K_ESCAPE:  # Quit Game
-                run = False
 
-            if event.key == pygame.K_F11:  # Toggles Fullscreen
-                fullscreen = not fullscreen
-                if fullscreen:
-                    # Save windowed window size
-                    setScreenWidth = SCREEN_WIDTH
-                    setScreenHeight = SCREEN_HEIGHT
-                    screen = pygame.display.set_mode((0, 0), FULLSCREEN | RESIZABLE)
-                else:
-                    screen = pygame.display.set_mode((setScreenWidth, setScreenHeight), RESIZABLE)
 
     # Screen Movement
     if camera_state.moving_left:
@@ -142,14 +136,14 @@ while run:
         camera_state.YScreenOffset -= camera_state.cameraSpeed / FPS
 
     # Background
-    screen.fill((17, 16, 27))
+    screen_handler.screen.fill((17, 16, 27))
     # Draw Tiles
     draw(camera_state.XScreenOffset, camera_state.YScreenOffset)
 
     # Calculate and Draw FPS Counter
     averageFPS.pop(0)
     averageFPS.append(FPS)
-    draw_text(screen, gameFont, str(int(sum(averageFPS) / maxFPSIndex)), 0, 0)
+    draw_text(screen_handler.screen, gameFont, str(int(sum(averageFPS) / maxFPSIndex)), 0, 0)
     # Puts everything on the display
     pygame.display.update()
 

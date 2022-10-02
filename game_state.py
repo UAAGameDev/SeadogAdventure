@@ -1,6 +1,6 @@
-from pygame import K_w, K_a, K_s, K_d # import wasd controls
+from pygame import K_w, K_a, K_s, K_d, K_F11, K_ESCAPE # import wasd controls
 from pygame import K_UP, K_DOWN, K_RIGHT, K_LEFT
-
+from ScreenHandler import ScreenHandler
 class Universe:
     """
     class that should contain all of the players, characters, and should probably own the camera position too?
@@ -68,13 +68,19 @@ class PlayerState:
     def __init__(self):
         pass
 
+
+
+
 class KeyBoardState:
 
     def __init__(self):
         pass
 
 
-    def process_keyboard_events(self, keyboard_event, camera: CameraState, player):
+    def process_keyboard_events(self, keyboard_event,
+                                camera: CameraState,
+                                screen_handler: ScreenHandler,
+                                player: PlayerState):
         """
         takes a pygame keyboard event, a camera, and a player, and tells them what to do
         """
@@ -91,6 +97,9 @@ class KeyBoardState:
 
             K_d: lambda: camera.toggle_right(),
             K_RIGHT: lambda: camera.toggle_right(),
+
+            K_F11: lambda: screen_handler.toggle_full_screen(),
+            K_ESCAPE: lambda: screen_handler.shutdown()
         }
 
         if keyboard_event in camera_key_mapping:
@@ -100,8 +109,5 @@ class KeyBoardState:
 
 
 
-class PygameHandler:
 
-    def __init__(self):
-        pass
 
