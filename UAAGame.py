@@ -3,6 +3,7 @@ from pygame.locals import VIDEORESIZE, FULLSCREEN, RESIZABLE
 from screen_setup import initialize_screen
 
 from SpriteSheet import SpriteSheet, scale_image, draw_text
+from game_state import KeyBoardState, CameraState
 from World import World, Tile
 
 screen, SCREEN_WIDTH, SCREEN_HEIGHT = initialize_screen(two_monitors=False)
@@ -86,14 +87,12 @@ def draw(XScreenOffset, YScreenOffset):
 run = True
 
 # Keyboard
-movingLeft = False
-movingRight = False
-movingUp = False
-movingDown = False
+keyboard_state = KeyBoardState()
 # Camera
-XScreenOffset = 0
-YScreenOffset = 0
-cameraSpeed = 128.0
+camera_state = CameraState()
+
+
+
 # FPS Counter
 indexFPS = 0
 maxFPSIndex = 20
@@ -112,29 +111,23 @@ while run:
             run = False
         if event.type == VIDEORESIZE:  # if window is resized change the window
             # Center camera in window so the view appears to have not changed
-            XScreenOffset += (SCREEN_WIDTH - event.w) / 2
-            YScreenOffset -= (SCREEN_HEIGHT - event.h) / 2
+            camera_state.XScreenOffset += (SCREEN_WIDTH - event.w) / 2
+            camera_state.YScreenOffset -= (SCREEN_HEIGHT - event.h) / 2
             SCREEN_WIDTH = event.w
             SCREEN_HEIGHT = event.h
             if not FULLSCREEN:
                 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), RESIZABLE)
 
         # Key Events
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                movingRight = True
-            if event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                movingLeft = True
-            if event.key == pygame.K_w or event.key == pygame.K_UP:
-                movingUp = True
-            if event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                movingDown = True
+        if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+            keyboard_state.process_keyboard_events(event.key, camera_state, None)
 
             if event.key == pygame.K_ESCAPE:  # Quit Game
                 run = False
+
             if event.key == pygame.K_F11:  # Toggles Fullscreen
                 fullscreen = not fullscreen
-                if (fullscreen):
+                if fullscreen:
                     # Save windowed window size
                     setScreenWidth = SCREEN_WIDTH
                     setScreenHeight = SCREEN_HEIGHT
@@ -142,30 +135,20 @@ while run:
                 else:
                     screen = pygame.display.set_mode((setScreenWidth, setScreenHeight), RESIZABLE)
 
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                movingRight = False
-            if event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                movingLeft = False
-            if event.key == pygame.K_w or event.key == pygame.K_UP:
-                movingUp = False
-            if event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                movingDown = False
-
     # Screen Movement
-    if movingLeft:
-        XScreenOffset -= cameraSpeed / FPS
-    if movingRight:
-        XScreenOffset += cameraSpeed / FPS
-    if movingUp:
-        YScreenOffset += cameraSpeed / FPS
-    if movingDown:
-        YScreenOffset -= cameraSpeed / FPS
+    if camera_state.moving_left:
+        camera_state.XScreenOffset -= camera_state.cameraSpeed / FPS
+    if camera_state.moving_right:
+        camera_state.XScreenOffset += camera_state.cameraSpeed / FPS
+    if camera_state.moving_up:
+        camera_state.YScreenOffset += camera_state.cameraSpeed / FPS
+    if camera_state.moving_down:
+        camera_state.YScreenOffset -= camera_state.cameraSpeed / FPS
 
     # Background
     screen.fill((17, 16, 27))
     # Draw Tiles
-    draw(XScreenOffset, YScreenOffset)
+    draw(camera_state.XScreenOffset, camera_state.YScreenOffset)
 
     # Calculate and Draw FPS Counter
     averageFPS.pop(0)
