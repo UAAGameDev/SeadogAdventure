@@ -73,40 +73,49 @@ class PlayerState:
 
 class KeyBoardState:
 
-    def __init__(self):
-        pass
+    def __init__(self, camera: CameraState,
+                 screen_handler: ScreenHandler,
+                 player: PlayerState):
+        self.camera = camera
+        self.screen_handler = screen_handler
+        self.player = player
 
+        # these events get fired on up or down key input (press or depress)
+        self.control_mapping_up_or_down = {
+            K_w: lambda: self.camera.toggle_up(),
+            K_UP: lambda: self.camera.toggle_up(),
 
-    def process_keyboard_events(self, keyboard_event,
-                                camera: CameraState,
-                                screen_handler: ScreenHandler,
-                                player: PlayerState):
-        """
-        takes a pygame keyboard event, a camera, and a player, and tells them what to do
-        """
-        # mapping from keys to camera events for now, can add more later
-        camera_key_mapping = {
-            K_w: lambda: camera.toggle_up(),
-            K_UP: lambda: camera.toggle_up(),
+            K_a: lambda: self.camera.toggle_left(),
+            K_LEFT: lambda: self.camera.toggle_left(),
 
-            K_a: lambda: camera.toggle_left(),
-            K_LEFT: lambda: camera.toggle_left(),
+            K_s: lambda: self.camera.toggle_down(),
+            K_DOWN: lambda: self.camera.toggle_down(),
 
-            K_s: lambda: camera.toggle_down(),
-            K_DOWN: lambda: camera.toggle_down(),
+            K_d: lambda: self.camera.toggle_right(),
+            K_RIGHT: lambda: self.camera.toggle_right(),
 
-            K_d: lambda: camera.toggle_right(),
-            K_RIGHT: lambda: camera.toggle_right(),
-
-            K_F11: lambda: screen_handler.toggle_full_screen(),
-            K_ESCAPE: lambda: screen_handler.shutdown()
         }
 
-        if keyboard_event in camera_key_mapping:
+        # these keyboard events only are triggered when the key is pressed
+        self.control_mapping_down_only = {
+            K_F11: lambda: self.screen_handler.toggle_full_screen(),
+            K_ESCAPE: lambda: self.screen_handler.shutdown()
+        }
+
+
+    def process_key_up_or_down(self, keyboard_event):
+        # take the keyboard event, if it's in the control map, execute the appropriate control
+        if keyboard_event in self.control_mapping_up_or_down:
             # check to see that the keyboard event is in the map, then call what you get back from
             # the dictionary as a function
-            camera_key_mapping[keyboard_event]()
+            self.control_mapping_up_or_down[keyboard_event]()
 
+    def process_key_down(self, keyboard_event):
+        # take the keyboard event, if it's in the control map, execute the appropriate control
+        if keyboard_event in self.control_mapping_down_only:
+            # check to see that the keyboard event is in the map, then call what you get back from
+            # the dictionary as a function
+            self.control_mapping_down_only[keyboard_event]()
 
 
 

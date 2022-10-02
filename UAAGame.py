@@ -87,10 +87,11 @@ def draw(XScreenOffset, YScreenOffset):
 
 
 
-# Keyboard
-keyboard_state = KeyBoardState()
+
 # Camera
 camera_state = CameraState()
+# Keyboard
+keyboard_state = KeyBoardState(camera_state, screen_handler, None)  # camera state, screen handler, and player go here
 
 # FPS Counter
 indexFPS = 0
@@ -121,7 +122,12 @@ while screen_handler.running:
 
         # Keyboard Events
         if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-            keyboard_state.process_keyboard_events(event.key, camera_state, screen_handler, None)
+            # process the events that occur on the key up or the key down
+            keyboard_state.process_key_up_or_down(event.key)
+
+        if event.type == pygame.KEYDOWN:
+            # process the events that are solely on key down (like window resizing stuff)
+            keyboard_state.process_key_down(event.key)
 
 
 

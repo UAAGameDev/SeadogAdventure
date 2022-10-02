@@ -50,7 +50,7 @@ class ScreenHandler:
         self.running = False
 
     def toggle_full_screen(self):
-
+        self.fullscreen = not self.fullscreen
         if self.fullscreen:
             # Save windowed window size
             self.setScreenWidth = self.screen_width
