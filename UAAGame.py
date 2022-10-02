@@ -1,8 +1,5 @@
 import pygame
-from pygame.locals import *
-import os
-import math
-import random
+from pygame.locals import VIDEORESIZE, FULLSCREEN, RESIZABLE
 from screen_setup import initialize_screen
 
 from SpriteSheet import SpriteSheet, scale_image, draw_text
