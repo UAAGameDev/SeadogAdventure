@@ -153,13 +153,13 @@ while run:
                 movingDown = False
 
     # Screen Movement
-    if (movingLeft):
+    if movingLeft:
         XScreenOffset -= cameraSpeed / FPS
-    if (movingRight):
+    if movingRight:
         XScreenOffset += cameraSpeed / FPS
-    if (movingUp):
+    if movingUp:
         YScreenOffset += cameraSpeed / FPS
-    if (movingDown):
+    if movingDown:
         YScreenOffset -= cameraSpeed / FPS
 
     # Background
