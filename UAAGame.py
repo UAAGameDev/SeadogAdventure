@@ -91,8 +91,6 @@ keyboard_state = KeyBoardState()
 # Camera
 camera_state = CameraState()
 
-
-
 # FPS Counter
 indexFPS = 0
 maxFPSIndex = 20
