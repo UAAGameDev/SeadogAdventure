@@ -30,7 +30,7 @@ if(False): # Set this to true if you want it to appear on a second monitor
 # Title
 pygame.display.set_caption('UAA Game')
 # Icon
-toddler = pygame.image.load("screaming_toddler.jpg")
+toddler = pygame.image.load("Game_Icon.png")
 pygame.display.set_icon(toddler)
 # Game Clock
 clock = pygame.time.Clock()
