@@ -41,5 +41,5 @@ def initialize_screen(two_monitors=False,
     return screen, SCREEN_WIDTH, SCREEN_HEIGHT
 
     # Icon
-    toddler = pygame.image.load("screaming_toddler.jpg")
+    toddler = pygame.image.load("game_icon.png")
     pygame.display.set_icon(toddler)
