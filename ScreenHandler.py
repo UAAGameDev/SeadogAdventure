@@ -18,7 +18,7 @@ class ScreenHandler:
 
         self.screen_width = int(pygame.display.Info().current_w / 1.5)
         self.screen_height = int(pygame.display.Info().current_h / 1.5)
-        self.screen = pygame.display.set_mode((self.screen_width, self.screen_width), RESIZABLE)
+        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height), RESIZABLE)
         self.fullscreen = False
 
         # These store the width and height for switching between full screen and windowed.
