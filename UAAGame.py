@@ -8,9 +8,7 @@ from World import World, Tile
 
 screen, SCREEN_WIDTH, SCREEN_HEIGHT = initialize_screen(two_monitors=False)
 
-# Icon
-toddler = pygame.image.load("screaming_toddler.jpg")
-pygame.display.set_icon(toddler)
+
 # Game Clock
 clock = pygame.time.Clock()
 # Font
