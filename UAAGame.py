@@ -116,7 +116,7 @@ while run:
             YScreenOffset -= (SCREEN_HEIGHT - event.h) / 2
             SCREEN_WIDTH = event.w
             SCREEN_HEIGHT = event.h
-            if (not FULLSCREEN):
+            if not FULLSCREEN:
                 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), RESIZABLE)
 
         # Key Events
