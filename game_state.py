@@ -14,7 +14,7 @@ class Universe:
         self.players = []
         self.objects = []
 
-        # states\
+        # states
         self.game_state = None
         self.camera_state = None
         self.player_state = None
@@ -99,4 +99,9 @@ class KeyBoardState:
             camera_key_mapping[keyboard_event]()
 
 
+
+class PygameHandler:
+
+    def __init__(self):
+        pass
 

@@ -38,8 +38,11 @@ def initialize_screen(two_monitors=False,
     pygame.display.set_caption(game_title)
 
     # after the screen is configured, return a tuple with the screen object, the width and the height
-    return screen, SCREEN_WIDTH, SCREEN_HEIGHT
+
 
     # Icon
     toddler = pygame.image.load("game_icon.png")
     pygame.display.set_icon(toddler)
+
+    return screen, SCREEN_WIDTH, SCREEN_HEIGHT
+
