@@ -4,7 +4,7 @@ from ScreenHandler import ScreenHandler
 
 from SpriteSheet import SpriteSheet, scale_image, draw_text
 from game_state import KeyBoardState, CameraState
-from World import World, Tile
+from World import Level, Tile
 
 screen_handler = ScreenHandler()
 

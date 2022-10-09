@@ -1,5 +1,4 @@
 import math
-
 class Tile:
     def __init__(self, land = 5, prop = 0, solidProp = 0, isWalkable = False):
         self.land = land
@@ -8,31 +7,28 @@ class Tile:
         self.isWalkable = isWalkable
 
 class Chunk:
-    def __init__(self, xSize, ySize, traversable = 0, prop = 0, solidProp = 0, isWalkable = False):
-        self.data = []
-        for x in range(xSize):
-            self.data.append([])
-            for y in range(ySize):
-                if (x % 5 == 0):
-                    self.data[x].append(Tile(land=5))
-                elif (x % 5 == 1):
-                    self.data[x].append(Tile(land=9, prop=14))
-                else:
-                    self.data[x].append(Tile(land=9))
+    ChunkXSize = 16
+    ChunkYSize = 16
+    def __init__(self, data = [], traversable = 0, prop = 0, solidProp = 0, isWalkable = False):
+        self.data = data
 
-
-class World:
-    def __init__(self):
-        self.Chunks = {}
-        self.ChunkXSize = 16
-        self.ChunkYSize = 16
-
-    def initChunk(self, x, y):
-        chunkKey=(x,y)
-        self.Chunks[chunkKey]=Chunk(self.ChunkXSize, self.ChunkYSize)
-
+        if not data:
+            for x in range(Chunk.ChunkXSize):
+                self.data.append([])
+                for y in range(Chunk.ChunkYSize):
+                    if (x % 5 == 0):
+                        self.data[x].append(Tile(land=5))
+                    elif (x % 5 == 1):
+                        self.data[x].append(Tile(land=9, prop=14))
+                    else:
+                        self.data[x].append(Tile(land=9))
+class Level:
+    def __init__(self, chunks : map, entities : list):
+        self.Chunks = chunks
+        self.Entities = entities
     def getTile(self,x, y):
         return self.Chunks[(math.floor(x / self.ChunkXSize), math.floor(y / self.ChunkYSize))].data[x % self.ChunkXSize][y % self.ChunkYSize]
-
+    def save(self):
+        pass
 
 
