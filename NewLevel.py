@@ -25,4 +25,5 @@ chunk00Data = [[w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w],
 chunk00 = Chunk(data = chunk00Data)
 chunk00Datamap = {(0,0) : chunk00}
 
-firstLevel = Level(chunks = chunk00Datamap)
+newLevel = Level(chunks = chunk00Datamap)
+

@@ -5,6 +5,7 @@ from ScreenHandler import ScreenHandler
 from SpriteSheet import SpriteSheet, scale_image, draw_text
 from game_state import KeyBoardState, CameraState
 import World
+from NewLevel import newLevel
 
 screen_handler = ScreenHandler()
 
@@ -59,9 +60,6 @@ ID_LIST = {
     19: Props[9],  # Wide Halloween Poster
 }
 
-chunk00 = World.Chunk()
-chunkMap = {(0,0) : chunk00}
-newLevel = World.Level(chunkMap)
 
 BlockXOffset = BlockXSize * Scale / 2
 BlockYOffset = BlockXSize * Scale / 2
