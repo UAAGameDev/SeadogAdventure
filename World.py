@@ -1,4 +1,7 @@
 import math
+ChunkXSize = 16
+ChunkYSize = 16
+
 
 class Tile:
     def __init__(self, land = 5, prop = 0, solidProp = 0, isWalkable = False):
@@ -8,31 +11,24 @@ class Tile:
         self.isWalkable = isWalkable
 
 class Chunk:
-    def __init__(self, xSize, ySize, traversable = 0, prop = 0, solidProp = 0, isWalkable = False):
-        self.data = []
-        for x in range(xSize):
-            self.data.append([])
-            for y in range(ySize):
-                if (x % 5 == 0):
-                    self.data[x].append(Tile(land=5))
-                elif (x % 5 == 1):
-                    self.data[x].append(Tile(land=9, prop=14))
-                else:
-                    self.data[x].append(Tile(land=9))
-
-
-class World:
-    def __init__(self):
-        self.Chunks = {}
-        self.ChunkXSize = 16
-        self.ChunkYSize = 16
-
-    def initChunk(self, x, y):
-        chunkKey=(x,y)
-        self.Chunks[chunkKey]=Chunk(self.ChunkXSize, self.ChunkYSize)
-
+    def __init__(self, data: list = [], traversable = 0, prop = 0, solidProp = 0, isWalkable = False):
+        self.data = data
+        if not data:
+            for x in range(ChunkXSize):
+                self.data.append([])
+                for y in range(ChunkYSize):
+                    self.data[x].append(Tile(land=6))
     def getTile(self,x, y):
-        return self.Chunks[(math.floor(x / self.ChunkXSize), math.floor(y / self.ChunkYSize))].data[x % self.ChunkXSize][y % self.ChunkYSize]
+        return self.data[x][y]
+
+
+class Level:
+    def __init__(self, chunks : map):
+        self.Chunks = chunks
+    def getTile(self,x, y):
+        chunkX = math.floor(x / ChunkXSize)
+        chunkY = math.floor(y / ChunkYSize)
+        return self.Chunks[(chunkX,chunkY)].getTile(x % ChunkXSize, y % ChunkYSize)
 
 
 
