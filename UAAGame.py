@@ -4,7 +4,10 @@ from ScreenHandler import ScreenHandler
 
 from SpriteSheet import SpriteSheet, scale_image, draw_text
 from game_state import KeyBoardState, CameraState
-from World import Level, Tile
+
+import World
+from NewLevel import newLevel
+
 
 screen_handler = ScreenHandler()
 
@@ -59,9 +62,6 @@ ID_LIST = {
     19: Props[9],  # Wide Halloween Poster
 }
 
-world = World()
-world.initChunk(0, 0)
-world.initChunk(1, 0)
 
 BlockXOffset = BlockXSize * Scale / 2
 BlockYOffset = BlockXSize * Scale / 2
@@ -74,15 +74,15 @@ def draw(XScreenOffset, YScreenOffset):
     handler that does this sort of processing?
     """
     global screen_handler, BlockXSize, BlockYSize, Walls, Floors, Props, BlockXOffset, BlockYOffset
-    for y in range(world.ChunkYSize):
+    for y in range(World.ChunkYSize):
         xYOffset = BlockYOffset * y + XScreenOffset
         yYOffset = BlockYOffset / 2 * y + YScreenOffset
-        for x in range(world.ChunkXSize):
-            screen_handler.screen.blit(ID_LIST[world.getTile(x, y).land],
+        for x in range(World.ChunkXSize):
+            screen_handler.screen.blit(ID_LIST[newLevel.getTile(x, y).land],
                         (x * BlockXOffset - xYOffset, x * BlockXOffset / 2 + yYOffset))
-            screen_handler.screen.blit(ID_LIST[world.getTile(x, y).solidProp],
+            screen_handler.screen.blit(ID_LIST[newLevel.getTile(x, y).solidProp],
                         (x * BlockXOffset - xYOffset, x * BlockXOffset / 2 + yYOffset))
-            screen_handler.screen.blit(ID_LIST[world.getTile(x, y).prop],
+            screen_handler.screen.blit(ID_LIST[newLevel.getTile(x, y).prop],
                         (x * BlockXOffset - xYOffset, x * BlockXOffset / 2 + yYOffset))
 
 
